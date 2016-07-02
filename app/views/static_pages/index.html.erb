@@ -8,12 +8,7 @@
 
   <section class="main">
     <ul class="todo-list">
-      <li>
-        <div class="view">
-          <input class="toggle" type="checkbox">
-          <label>Do Laundry</label>
-        </div>
-      </li>
+
     </ul>
 
   </section>
@@ -21,24 +16,6 @@
 
 <script>
   $(function(){
-
-    $('#new-form').submit(function(event){
-      event.preventDefault();
-      console.log("intercepted.")
-      var textbox = $(".new-todo");
-      var payload = {
-        task: {
-          title: textbox.val()
-        }
-      };
-
-      $.post("/tasks", payload).success(function(data){
-        console.log("successful http request");
-      });
-
-      console.log(payload);
-
-    });
     
     function taskHtml(task) {
       var checkedStatus = task.done? "checked" : "";
@@ -58,6 +35,24 @@
         }
       });      
     }
+
+    $('#new-form').submit(function(event){
+      event.preventDefault();
+      console.log("intercepted.")
+      var textbox = $(".new-todo");
+      var payload = {
+        task: {
+          title: textbox.val()
+        }
+      };
+
+      $.post("/tasks", payload).success(function(data){
+        var htmlString = taskHtml(data);
+        var ulTodos = $(".todo-list");
+        ulTodos.append(htmlString);
+        $('.toggle').click(toggleTask);
+      });
+    });    
 
     $.get("/tasks").success(function(data){
       var htmlString = "";
