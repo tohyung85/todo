@@ -21,11 +21,29 @@
     $.get("/tasks").success(function(data){
       var htmlString = "";
       $.each(data, function(index,task){
-        var liElement = "<li><div class='view'><input class='toggle' type='checkbox'><label>" + task.title + "</label></div></li>";
+        var checkedStatus = task.done? "checked" : "";
+        var liElement = "<li><div class='view'><input class='toggle' type='checkbox' "+ checkedStatus + " data-id=" + task.id + "><label>" + task.title + "</label></div></li>";
         htmlString += liElement;
       });
       var ulTodos = $('.todo-list');
       ulTodos.html(htmlString);
+
+      $('.toggle').change(function(e){
+        var itemID = $(e.target).data("id");
+        console.log(itemID);
+
+        var doneValue = Boolean($(e.target).is(":checked"));
+        console.log("done:", doneValue);
+
+        $.post("/tasks/"+itemID, {
+          _method: "PUT",
+          task: {
+            done: doneValue
+          }
+        });
+
+      });
+
     });    
   });
 </script>
